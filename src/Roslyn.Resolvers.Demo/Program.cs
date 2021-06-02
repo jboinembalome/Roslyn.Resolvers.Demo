@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -12,7 +11,7 @@ namespace Roslyn.Resolvers.Demo
     {
         public static void Main(string[] args)
         {
-            var code = File.ReadAllText("main.csx");
+            var code = File.ReadAllText("Scripts/Test.csx");
             var opts = ScriptOptions.Default.
                 AddImports("System").
                 WithSourceResolver(new RemoteFileResolver());
@@ -20,17 +19,12 @@ namespace Roslyn.Resolvers.Demo
             var script = CSharpScript.Create(code, opts);
             var compilation = script.GetCompilation();
             var diagnostics = compilation.GetDiagnostics();
+
             if (diagnostics.Any())
-            {
                 foreach (var diagnostic in diagnostics)
-                {
                     Console.WriteLine(diagnostic.GetMessage());
-                }
-            }
             else
-            {
-                var result = script.RunAsync().Result;
-            }
+                script.RunAsync();
 
             Console.ReadKey();
         }
